@@ -62,16 +62,16 @@
 // // getCountryAndNeighbour('bharat');
 // getCountryAndNeighbour('usa');
 
-const getJSON = function (url, errorMsg = 'Something went wrong') {
-  return fetch(url).then(response => {
-    console.log(response);
+// const getJSON = function (url, errorMsg = 'Something went wrong') {
+//   return fetch(url).then(response => {
+//     console.log(response);
 
-    if(!response.ok)
-      throw new Error(`${errorMsg} (${response.status})`);
+//     if(!response.ok)
+//       throw new Error(`${errorMsg} (${response.status})`);
 
-    return response.json();
-  });
-};
+//     return response.json();
+//   });
+// };
 
 
 // const getCountryData = function(country){
@@ -725,29 +725,76 @@ countriesContainer.style.opacity = 1;
 //       console.log(data);
 //       return renderCountry(data[0])});
 // };
+const getJSON = function (url, errMessage = 'Something went wrong') {
+ return fetch(url).then(response => {
+    console.log(response);
 
-const getCountryData = function(country) {
-  fetch(`https://restcountries.com/v2/name/${country}`)
-  .then(response => response.json())
-  .then(data => {
-    renderCountry(data[0])
+    if (!response.ok)
+      throw new Error(`${errMessage}(${response.status})`);
+
+    return response.json();
+  });
+};
+
+
+// const getCountryData = function(country) {
+//   fetch(`https://restcountries.com/v2/name/${country}`)
+//   .then(response =>  { 
+//     console.log(response);
+
+//     if(!response.ok) throw new Error(`Country Could not find!(${response.status})`);
+
+//    return response.json()
+//   })
+//   .then(data => {
+//     renderCountry(data[0])
   
-    const neighbour = data[0].borders[0];
+//     const neighbour = 'fhjkkd';
 
-    if (!neighbour) return;
-    // console.log(neighbour);
-    return fetch(`https://restcountries.com/v2/alpha/${neighbour}`)
-  })
-      .then(response => response.json())
-      .then(data => renderCountry(data, 'neighbour'))
-      .catch(err => {
+//     if (!neighbour) return;
+//     // console.log(neighbour);
+
+//     return fetch(`https://restcountries.com/v2/alpha/${neighbour}`)
+//       }).then(response => {
+//       if (!response.ok)
+//       throw new Error(`Country Could not find!(${response.status})`);
+//       return  response.json()
+//       })
+//       .then(data => renderCountry(data, 'neighbour'))
+//       .catch(err => {
+//       console.error(`${err} 💥💥💥`);
+//       renderError(`Something went wrong 💥💥 ${err.message}. Try again!`);
+//     })
+  
+// };
+// btn.addEventListener('click',function() {
+//   getCountryData('bharat');
+// });
+// getCountryData('dfgdsss');
+
+const getCountryData = function (country) {
+  getJSON(
+    `https://restcountries.com/v2/name/${country}`,
+    'Country Could not find!'
+  ).then(data => {
+      renderCountry(data[0]);
+
+      const neighbour = data[0].borders[0];
+
+      if (!neighbour) throw new Error('N0 Neighbour found!');
+      // console.log(neighbour);
+
+      return getJSON(`https://restcountries.com/v2/alpha/${neighbour}`,
+      'Country Could not find!')
+    })
+    .then(data => renderCountry(data, 'neighbour'))
+    .catch(err => {
       console.error(`${err} 💥💥💥`);
       renderError(`Something went wrong 💥💥 ${err.message}. Try again!`);
-    })
-  // }
-  
+    });
 };
-btn.addEventListener('click',function() {
-  getCountryData('portugal');
+btn.addEventListener('click', function () {
+  getCountryData('australia');
 });
+
 
