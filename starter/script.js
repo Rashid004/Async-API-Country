@@ -681,7 +681,7 @@ const html = `
 }
 
 const renderError = function(msg) {
- countriesContainer.insertAdjacentText('beforeend', msg);
+countriesContainer.insertAdjacentText('beforeend', msg);
 countriesContainer.style.opacity = 1;
 
 }
@@ -772,29 +772,151 @@ const getJSON = function (url, errMessage = 'Something went wrong') {
 // });
 // getCountryData('dfgdsss');
 
-const getCountryData = function (country) {
-  getJSON(
-    `https://restcountries.com/v2/name/${country}`,
-    'Country Could not find!'
-  ).then(data => {
+// const getCountryData = function (country) {
+//   getJSON(
+//     `https://restcountries.com/v2/name/${country}`,
+//     'Country Could not find!'
+//   ).then(data => {
+//       renderCountry(data[0]);
+
+//       const neighbour = data[0].borders[0];
+
+//       if (!neighbour) throw new Error('N0 Neighbour found!');
+//       // console.log(neighbour);
+
+//       return getJSON(`https://restcountries.com/v2/alpha/${neighbour}`,
+//       'Country Could not find!')
+//     })
+//     .then(data => renderCountry(data, 'neighbour'))
+//     .catch(err => {
+//       console.error(`${err} 💥💥💥`);
+//       renderError(`Something went wrong 💥💥 ${err.message}. Try again!`);
+//     });
+// };
+// btn.addEventListener('click', function () {
+//   getCountryData('bharat');
+// });
+
+
+// const whereAmI = function(lat,lng) {
+// const pos = await get
+
+//   fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
+//     .then(res => {
+//       console.log(res);
+//       if (!res.ok) throw new Error(`Problem with ${res.status}`);
+//       return res.json();
+//     })
+//     .then(data => {
+//       console.log(data);
+//       console.log(`You are in ${data.city}, ${data.country}`);
+
+//      return fetch(`https://restcountries.com/v2/name/${data.country}`);
+//     })
+//     .then(res => {
+//       console.log(res);
+//       if (!res.ok) throw new Error(`Country could not found (${res.status})`);
+//       return res.json();
+//     })
+//     .then(data => renderCountry(data[0]))
+//     .catch(err => 
+//       console.error(`${err.message} 💥`));
+// };
+
+// // whereAmI(52.508, 13.381);
+//   btn.addEventListener('click', function() {
+//   whereAmI(52.508,13.381);
+// })
+
+
+// const lotteryPromis = new Promise((resolve,rejcet) => {
+//   console.log('Lottery draw is happening ⌛');
+//   setTimeout(function (){
+//   if(Math.random() >= 0.5) {
+//     resolve('You Win 🏆');
+//   }else {
+//     rejcet(new Error('You Lost😭'));
+//   }
+// },2000)
+// }) 
+// lotteryPromis.then(res => console.log(res)).catch(err => console.error(err));
+
+// const wait  = function(second) {
+//   return new Promise(function(resolve){
+//     setTimeout(resolve, second * 1000);
+//   })
+// };
+
+// wait(2).then(res=> {
+//   console.log('I waited For 2 Second');
+//   return wait(1);
+// }).then(() => console.log('2 Second Passed'));
+
+
+const getPosition = function(resolve,reject) {
+  return new Promise(function(resolve,reject){
+  // navigator.geolocation.getCurrentPosition(position => resolve(position).catch(err=> console.log(err)));
+  navigator.geolocation.getCurrentPosition(resolve,reject);
+})
+};
+getPosition().then(pos => console.log(pos));
+
+
+const whereAmI = async function() {
+const pos = await getPosition();
+const {latitude: lat, longitude:lng} = pos.coords;
+
+const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+
+  const dataGeo = await resGeo.json();
+      console.log(dataGeo);
+
+     const res = await fetch(`https://restcountries.com/v2/name/${dataGeo.country}`);
+      const data = await res.json();
+      console.log(data);
       renderCountry(data[0]);
 
-      const neighbour = data[0].borders[0];
-
-      if (!neighbour) throw new Error('N0 Neighbour found!');
-      // console.log(neighbour);
-
-      return getJSON(`https://restcountries.com/v2/alpha/${neighbour}`,
-      'Country Could not find!')
-    })
-    .then(data => renderCountry(data, 'neighbour'))
-    .catch(err => {
-      console.error(`${err} 💥💥💥`);
-      renderError(`Something went wrong 💥💥 ${err.message}. Try again!`);
-    });
 };
-btn.addEventListener('click', function () {
-  getCountryData('australia');
-});
 
+whereAmI('bharat');
+console.log('First')
+const wait  = function(second) {
+  return new Promise(function(resolve){
+    setTimeout(resolve, second * 1000);
+  })
+};
+
+// const imgContainer = document.querySelector('.images');
+
+//   const createImage = function(imagePath) {
+//     return new Promise(function(resolve,reject) {
+     
+//       const img = document.createElement('img');
+//       img.src = imagePath;
+
+//       img.addEventListener('load', function() {
+//         imgContainer.append(img);
+//         resolve(img)
+//       })
+//       img.addEventListener('error', function() {
+//         reject(new Error('image Not Found!'));
+//       })
+//   }) ;
+// };
+// let currentImg ;
+
+// createImage('img/img-1.jpg').then(img => {
+//   currentImg = img;
+//   console.log('img 1 loaded')
+//   return wait(2); 
+
+// }).then(img => {
+//   currentImg.style.display = 'none';
+//   return createImage('img/img-2.jpg');
+
+// }).then(img => {
+//    currentImg = img;
+//    console.log('img 2 loaded');
+//    return wait(2); 
+// }).catch(err => console.error(err));
 
